@@ -1,0 +1,26 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "Amazon like application using CLI",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "node bamazonCustomer.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JPauloBR/bamazon.git"
+  },
+  "keywords": [
+    "bamazon"
+  ],
+  "author": "Joao Paulo Alexandre de Oliveira",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JPauloBR/bamazon/issues"
+  },
+  "homepage": "https://github.com/JPauloBR/bamazon#readme",
+  "dependencies": {
+    "inquirer": "^4.0.0",
+    "mysql": "^2.15.0"
+  }
+}
