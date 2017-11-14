@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirerUserPrompt = require("inquirer");
+var Table = require('cli-table');
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -21,24 +22,24 @@ connection.connect(function(err) {
 });
 
 function showAll() {
+  var table = new Table({
+      head: ['Item ID', 'Product Name', 'Department Name', 'Price', 'Stock Quantity']
+    , colWidths: [11, 30, 30, 14, 16]
+  });
   connection.query("SELECT * FROM products, department where products.department_id = department.department_id", function(err, res) {
     if (err) {
       throw err;
     };
-    console.log("\n\nItem_id | Product_name | Department_name | Price | Stock_quantity");
-    console.log("-----------------------------------------------------------------");
     for (var i = 0; i < res.length; i++) {
-      // console.log(res[i].item_id + "       " + res[i].product_name + "                         " + res[i].department_name + " " + res[i].price + " " + res[i].stock_quantity);
-      console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity);
+      table.push([res[i].item_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]);
 
     }
-    // console.log(res);
-
-    // connection.end();
+    console.log("\n\n");
+    console.log(table.toString());
   });
 };
 
-function main() {
+function main() { 
   showAll();
   inquirerUserPrompt
   .prompt ([
@@ -102,9 +103,6 @@ function buyingProduct(item_id, quantity) {
         })
     }
     else {
-      // console.log(typeof res[0].stock_quantity);
-      // console.log(typeof quantity);
-      // console.log(typeof res[0].product_sales);
       var actual_stock_quantity = res[0].stock_quantity - quantity;
       var actual_product_sales = res[0].product_sales + quantity;
       var total_price = res[0].price * quantity;
@@ -128,8 +126,6 @@ function buyingProduct(item_id, quantity) {
         main();
       });
     }
-
-    // connection.end();
   });
 }
 

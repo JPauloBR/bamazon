@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirerUserPrompt = require("inquirer");
+var Table = require('cli-table');
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -21,38 +22,38 @@ connection.connect(function(err) {
 });
 
 function showAll() {
+  var table = new Table({
+      head: ['Item ID', 'Product Name', 'Department Name', 'Price', 'Stock Quantity']
+    , colWidths: [11, 30, 30, 14, 16]
+  });
   connection.query("SELECT * FROM products, department where products.department_id = department.department_id", function(err, res) {
     if (err) {
       throw err;
     };
-    console.log("\n\nItem_id | Product_name | Department_name | Price | Stock_quantity");
-    console.log("-----------------------------------------------------------------");
     for (var i = 0; i < res.length; i++) {
-      // console.log(res[i].item_id + "       " + res[i].product_name + "                         " + res[i].department_name + " " + res[i].price + " " + res[i].stock_quantity);
-      console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity);
-
+      table.push([res[i].item_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]);
     }
-    // console.log(res);
+    console.log("\n\n");
+    console.log(table.toString());
     main();
-    // connection.end();
   });
 };
 
 function showLow() {
+  var tableLow = new Table({
+      head: ['Item ID', 'Product Name', 'Department Name', 'Price', 'Stock Quantity']
+    , colWidths: [11, 30, 30, 14, 16]
+  });
   connection.query("SELECT * FROM products, department where products.department_id = department.department_id and products.stock_quantity<5", function(err, res) {
     if (err) {
       throw err;
     };
-    console.log("\n\nItem_id | Product_name | Department_name | Price | Stock_quantity");
-    console.log("-----------------------------------------------------------------");
     for (var i = 0; i < res.length; i++) {
-      // console.log(res[i].item_id + "       " + res[i].product_name + "                         " + res[i].department_name + " " + res[i].price + " " + res[i].stock_quantity);
-      console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity);
-
+      tableLow.push([res[i].item_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]);
     }
-    // console.log(res);
+    console.log("\n\n");
+    console.log(tableLow.toString());
     main();
-    // connection.end();
   });
 };
 
@@ -148,9 +149,7 @@ function addInventory() {
       if (err) {
         throw err;
       };
-        console.log(res);
         newPrdQtd = parseInt(answer.product_quantity) + res[0].stock_quantity;
-        console.log("on select " + newPrdQtd);
           connection.query("UPDATE products SET ? WHERE ?", 
             [
               {
@@ -163,7 +162,6 @@ function addInventory() {
           if (err) {
             throw err;
           };
-            console.log("on update " + newPrdQtd);
             console.log(productID[1]+" Updated on Bamazon!");
             main();
           });
@@ -182,7 +180,7 @@ function main() {
   }
   ])
   .then(function(answer) {
-    console.log(answer.action);
+  
     switch(answer.action) {
 
       case "View Products for Sale":
